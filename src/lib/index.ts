@@ -1,46 +1,11 @@
-import {
-  reactElementType,
-  IReactNodeType,
-  IChildType,
-  createTextElementType,
-} from "./types";
-
-const createTextElement: createTextElementType = (text) => {
-  return {
-    type: "TEXT_ELEMENT",
-    props: {
-      nodeValue: text,
-      children: [],
-    },
-  };
-};
-
-const createElement: (
-  type: reactElementType,
-  props?: any,
-  ...children: IChildType[]
-) => IReactNodeType = (type, props, ...children) => {
-  return {
-    type,
-    props: {
-      ...props,
-      children: children.map((child) =>
-        typeof child === "object" ? child : createTextElement(child)
-      ),
-    },
-  };
-};
+import { createElement, createTextElement } from "./createElement";
+import { render } from "./render";
+import { workLoop } from "./wookLoop";
+export * from "./types"
+// requestIdleCallback(workLoop);
 
 export const Didact = {
   createElement,
+  createTextElement,
+  render,
 };
-
-// /** @jsx Didact.createElement */
-// export const element = (
-//   <div id="foo">
-//     <a>bar</a>
-//     <b />
-//   </div>
-// );
-
-// console.log(element);
