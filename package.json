@@ -4,8 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "prepare": "husky install"
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
     "license": "ISC",
@@ -23,20 +22,7 @@
         "@commitlint/cli": "^17.1.2",
         "@commitlint/config-conventional": "^17.1.0",
         "babel-loader": "^8.2.5",
-        "commitlint": "^17.1.2",
-        "husky": "^8.0.1",
-        "lint-staged": "^13.0.3",
         "ts-loader": "^9.4.1",
         "typescript": "^4.8.4"
-    },
-    "husky": {
-        "hooks": {
-            "commit-msg": "commitlint -e $GIT_PARAMS"
-        }
-    },
-    "commitlint": {
-        "extends": [
-            "@commitlint/config-conventional"
-        ]
     }
 }
