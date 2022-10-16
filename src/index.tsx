@@ -1,9 +1,21 @@
 import { Didact } from "./lib/index";
-const { render } = Didact;
+const { render, useState } = Didact;
 
 /** @jsx Didact.createElement */
 function App(props: any) {
-  return <h1>Hi {props.name}</h1>;
+  const [count, setCount] = useState<number>(0);
+  return (
+    <div>
+      <h1>Hi {count}</h1>
+      <button
+        onClick={() => {
+          setCount((count) => count + 1);
+        }}
+      >
+        click + 1
+      </button>
+    </div>
+  );
 }
 
 const element = <App name="foo" />;

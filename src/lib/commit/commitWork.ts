@@ -19,6 +19,7 @@ export function commitWork(fiber: IFiberNodeType | undefined) {
 function handleEffectTags(fiber: IFiberNodeType, domParent: Node) {
   if (fiber.effectTag === "PLACEMENT" && fiber.dom != null) {
     domParent.appendChild(fiber.dom!);
+    updateDom(fiber.dom, { children: [] }, fiber.props);
   } else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
     updateDom(fiber.dom, fiber.alternate!.props, fiber.props);
   } else if (fiber.effectTag === "DELETION") {
@@ -63,7 +64,6 @@ function updateDom(
     .forEach((name) => {
       (dom as any)[name] = nextProps[name];
     });
-  // Add event listeners
   Object.keys(nextProps)
     .filter(isEvent)
     .filter(isNew(prevProps, nextProps))

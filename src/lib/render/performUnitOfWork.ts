@@ -33,6 +33,7 @@ function updateFunctionComponent(fiber: FunctionFiber) {
   // 对于 Function Component，在 render 的时候，会执行一次。
   wipFiber.current = fiber;
   hookIndex.current = 0;
+  wipFiber.current.hooks = [];
   const children = [fiber.type(fiber.props)];
   reconcileChildren(fiber, children);
 }
