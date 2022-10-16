@@ -5,7 +5,8 @@ export function commitWork(fiber: IFiberNodeType | undefined) {
   if (!fiber) {
     return;
   }
-  const domParent = fiber.parent!.dom;
+  const domParent = fiber.parent!.dom!;
+  handleEffectTags(fiber, domParent);
   domParent!.appendChild(fiber.dom!);
   commitWork(fiber.child);
   commitWork(fiber.sibling);
@@ -21,10 +22,44 @@ function handleEffectTags(fiber: IFiberNodeType, domParent: Node) {
   }
 }
 
+const isProperty = (key: string) => key !== "children";
+const isNew = (prev, next) => (key) => prev[key] !== next[key];
+const isGone = (prev, next) => (key) => !(key in next);
+const isEvent = (key) => key.startsWith("on");
+const isProperty = (key) => key !== "children" && !isEvent(key);
+
 function updateDom(
   dom: Node,
   prevProps: IFiberNodeType["props"],
   nextProps: IFiberNodeType["props"]
 ) {
-  // TODO
+  //Remove old or changed event listeners
+  Object.keys(prevProps)
+    .filter(isEvent)
+    .filter((key) => !(key in nextProps) || isNew(prevProps, nextProps)(key))
+    .forEach((name) => {
+      const eventType = name.toLowerCase().substring(2);
+      dom.removeEventListener(eventType, prevProps[name]);
+    });
+  Object.keys(prevProps)
+    .filter(isProperty)
+    .filter(isGone(prevProps, nextProps))
+    .forEach((name) => {
+      dom[name] = "";
+    });
+  // Set new or changed properties
+  Object.keys(nextProps)
+    .filter(isProperty)
+    .filter(isNew(prevProps, nextProps))
+    .forEach((name) => {
+      dom[name] = nextProps[name];
+    });
+  // Add event listeners
+  Object.keys(nextProps)
+    .filter(isEvent)
+    .filter(isNew(prevProps, nextProps))
+    .forEach((name) => {
+      const eventType = name.toLowerCase().substring(2);
+      dom.addEventListener(eventType, nextProps[name]);
+    });
 }
