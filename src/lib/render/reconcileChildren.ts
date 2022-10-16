@@ -7,12 +7,12 @@ export function reconcileChildren(
   elements: IFiberNodeType[]
 ) {
   let index = 0;
-  let prevSibling = null;
+  let prevSibling: IFiberNodeType | undefined = undefined;
   // 要知道，在第一次渲染的时候，是没有 alternate 的
   let oldFiber = wipFiber.alternate?.child;
   while (index < elements.length || oldFiber != null) {
     const element = elements[index];
-    let newFiber: IFiberNodeType;
+    let newFiber: IFiberNodeType | undefined;
     // 现在我们已经拿到了之前的 oldFiberNode 和 我们新的 fiberNode 这个时候，我们需要进行对比。
     const sameType = oldFiber && element && element.type == oldFiber.type;
     if (sameType) {
@@ -40,17 +40,11 @@ export function reconcileChildren(
       deletions.current.push(oldFiber);
     }
 
-    // const newFiber: IFiberNodeType = {
-    //   type: element.type,
-    //   props: element.props,
-    //   parent: wipFiber,
-    //   dom: undefined,
-    // };
     if (oldFiber) {
       oldFiber = oldFiber.sibling;
     }
     if (index === 0) {
-      wipFiber.child = newFiber!;
+      wipFiber.child = newFiber;
     } else {
       prevSibling!.sibling = newFiber!;
     }

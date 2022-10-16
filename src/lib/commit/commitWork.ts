@@ -5,9 +5,12 @@ export function commitWork(fiber: IFiberNodeType | undefined) {
   if (!fiber) {
     return;
   }
-  const domParent = fiber.parent!.dom!;
+  let domParentFiber: IFiberNodeType = fiber.parent!;
+  while (!domParentFiber.dom) {
+    domParentFiber = domParentFiber.parent!;
+  }
+  const domParent: Node = domParentFiber.dom;
   handleEffectTags(fiber, domParent);
-  domParent!.appendChild(fiber.dom!);
   commitWork(fiber.child);
   commitWork(fiber.sibling);
 }
@@ -18,15 +21,20 @@ function handleEffectTags(fiber: IFiberNodeType, domParent: Node) {
   } else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
     updateDom(fiber.dom, fiber.alternate!.props, fiber.props);
   } else if (fiber.effectTag === "DELETION") {
-    domParent.removeChild(fiber.dom!);
+    commitDeletion(fiber, domParent);
   }
 }
 
 const isProperty = (key: string) => key !== "children";
-const isNew = (prev, next) => (key) => prev[key] !== next[key];
-const isGone = (prev, next) => (key) => !(key in next);
-const isEvent = (key) => key.startsWith("on");
-const isProperty = (key) => key !== "children" && !isEvent(key);
+const isNew =
+  (prev: IFiberNodeType["props"], next: IFiberNodeType["props"]) =>
+  (key: string) =>
+    prev[key] !== next[key];
+const isGone =
+  (prev: IFiberNodeType["props"], next: IFiberNodeType["props"]) =>
+  (key: string) =>
+    !(key in next);
+const isEvent = (key: string) => key.startsWith("on");
 
 function updateDom(
   dom: Node,
@@ -45,14 +53,14 @@ function updateDom(
     .filter(isProperty)
     .filter(isGone(prevProps, nextProps))
     .forEach((name) => {
-      dom[name] = "";
+      (dom as any)[name] = "";
     });
   // Set new or changed properties
   Object.keys(nextProps)
     .filter(isProperty)
     .filter(isNew(prevProps, nextProps))
     .forEach((name) => {
-      dom[name] = nextProps[name];
+      (dom as any)[name] = nextProps[name];
     });
   // Add event listeners
   Object.keys(nextProps)
@@ -62,4 +70,12 @@ function updateDom(
       const eventType = name.toLowerCase().substring(2);
       dom.addEventListener(eventType, nextProps[name]);
     });
+}
+
+function commitDeletion(fiber: IFiberNodeType, domParent: Node) {
+  if (fiber.dom) {
+    domParent.removeChild(fiber.dom);
+  } else {
+    commitDeletion(fiber!.child!, domParent);
+  }
 }

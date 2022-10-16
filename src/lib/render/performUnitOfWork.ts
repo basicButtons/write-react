@@ -1,15 +1,20 @@
 import { reconcileChildren } from "./reconcileChildren";
 import { createDom } from "./render";
-import { IFiberNodeType } from "../types";
+import { FunctionFiber, IFiberNodeType } from "../types";
 
 export function performUnitOfWork(
   fiber: IFiberNodeType
 ): IFiberNodeType | undefined {
-  if (!fiber.dom) {
-    fiber.dom = createDom(fiber);
+  // 当引入 funciton component 的时候，主要有两个区别
+  // 1. the fiber from a function component doesn’t have a DOM node
+  // 2. the children come from running the function instead of getting them directly from the props
+  const isFunctionComponent = fiber.type instanceof Function;
+  if (isFunctionComponent) {
+    // function component
+    updateFunctionComponent(fiber as FunctionFiber);
+  } else {
+    updateHostComponent(fiber);
   }
-  const elements = fiber.props.children;
-  reconcileChildren(fiber, elements);
   if (fiber.child) {
     return fiber.child;
   }
@@ -21,4 +26,17 @@ export function performUnitOfWork(
     nextFiber = nextFiber.parent!;
   }
   // 当有子节点的时候，我们去把下一个 unitWork 设置为 sibling ，当没有子节点的时候，我们将其设置为他的parent。然后去便利该parent 的 sibling 然后再去parent 的 parent直到结束。
+}
+
+function updateFunctionComponent(fiber: FunctionFiber) {
+  // 对于 Function Component，在 render 的时候，会执行一次。
+  const children = [fiber.type(fiber.props)];
+  reconcileChildren(fiber, children);
+}
+
+function updateHostComponent(fiber: IFiberNodeType) {
+  if (!fiber.dom) {
+    fiber.dom = createDom(fiber);
+  }
+  reconcileChildren(fiber, fiber.props.children);
 }

@@ -13,6 +13,20 @@ type TextFiber = {
     [property: string]: any;
   };
 };
+export type FunctionFiber = {
+  type: Function;
+  parent?: IFiberNodeType;
+  dom?: Node;
+  child?: IFiberNodeType;
+  sibling?: IFiberNodeType;
+  effectTag?: "UPDATE" | "PLACEMENT" | "DELETION";
+  alternate?: IFiberNodeType;
+  props: {
+    nodeValue?: Exclude<IChildType, IFiberNodeType>;
+    children: IFiberNodeType[];
+    [property: string]: any;
+  };
+};
 export type NodeFiber = {
   type: reactElementType;
   parent?: IFiberNodeType;
@@ -26,7 +40,7 @@ export type NodeFiber = {
     children: IFiberNodeType[];
   };
 };
-export type IFiberNodeType = TextFiber | NodeFiber;
+export type IFiberNodeType = TextFiber | NodeFiber | FunctionFiber;
 
 export type IChildType = IFiberNodeType | string | number;
 
