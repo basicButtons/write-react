@@ -7,7 +7,8 @@ type TextFiber = {
   sibling?: IFiberNodeType;
   alternate?: IFiberNodeType;
   props: {
-    nodeValue: Exclude<IChildType, IFiberNodeType>;
+    nodeValue?: Exclude<IChildType, IFiberNodeType>;
+    children: IFiberNodeType[];
     [property: string]: any;
   };
 };

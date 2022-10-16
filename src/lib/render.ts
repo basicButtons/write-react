@@ -6,7 +6,7 @@ import { WipRoot } from "./workStore";
 export const createDom = (fiber: IFiberNodeType) => {
   const dom: Node =
     fiber.type === "TEXT_ELEMENT"
-      ? document.createTextNode(fiber.props.nodeValue.toString())
+      ? document.createTextNode(fiber.props.nodeValue!.toString())
       : document.createElement(fiber.type);
   const isProperty = (key: string) => key !== "children";
   Object.keys(fiber.props)
