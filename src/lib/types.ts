@@ -5,6 +5,7 @@ type TextFiber = {
   dom?: Node;
   child?: IFiberNodeType;
   sibling?: IFiberNodeType;
+  alternate?: IFiberNodeType;
   props: {
     nodeValue: Exclude<IChildType, IFiberNodeType>;
     [property: string]: any;
@@ -16,6 +17,7 @@ export type NodeFiber = {
   dom?: Node;
   child?: IFiberNodeType;
   sibling?: IFiberNodeType;
+  alternate?: IFiberNodeType;
   props: {
     [property: string]: any;
     children: IFiberNodeType[];

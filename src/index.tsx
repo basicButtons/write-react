@@ -4,7 +4,7 @@ const { render } = Didact;
 const element: IFiberNodeType = (
   <div id="foo">
     <a>bar</a>
-    <b />
+    <b>12312</b>
   </div>
 );
 console.log(element);
