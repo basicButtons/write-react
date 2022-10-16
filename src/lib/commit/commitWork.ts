@@ -1,4 +1,5 @@
-import { IFiberNodeType } from "../types";
+import { cancelEffects, runEffects } from "../hooks/useEffect";
+import { FunctionFiber, IFiberNodeType } from "../types";
 
 // 在执行完所有的 rerender 之后，我们会去进行 commit 工作，但是在这个阶段，我们还是同步的过程，该过程同样也是 dfs 的过程。
 export function commitWork(fiber: IFiberNodeType | undefined) {
@@ -17,12 +18,24 @@ export function commitWork(fiber: IFiberNodeType | undefined) {
 }
 
 function handleEffectTags(fiber: IFiberNodeType, domParent: Node) {
+  console.log("effectTag : ", fiber.effectTag);
   if (fiber.effectTag === "PLACEMENT" && fiber.dom != null) {
     domParent.appendChild(fiber.dom!);
-    updateDom(fiber.dom, { children: [] }, fiber.props);
+    if (fiber.type instanceof Function) {
+      runEffects(fiber as FunctionFiber);
+    }
   } else if (fiber.effectTag === "UPDATE" && fiber.dom != null) {
+    if (fiber.type instanceof Function) {
+      cancelEffects(fiber as FunctionFiber);
+    }
     updateDom(fiber.dom, fiber.alternate!.props, fiber.props);
+    if (fiber.type instanceof Function) {
+      runEffects(fiber as FunctionFiber);
+    }
   } else if (fiber.effectTag === "DELETION") {
+    if (fiber.type instanceof Function) {
+      cancelEffects(fiber as FunctionFiber);
+    }
     commitDeletion(fiber, domParent);
   }
 }
@@ -38,11 +51,12 @@ const isGone =
     !(key in next);
 const isEvent = (key: string) => key.startsWith("on");
 
-function updateDom(
+export function updateDom(
   dom: Node,
   prevProps: IFiberNodeType["props"],
   nextProps: IFiberNodeType["props"]
 ) {
+  console.log("update!!! : ", prevProps);
   //Remove old or changed event listeners
   Object.keys(prevProps)
     .filter(isEvent)

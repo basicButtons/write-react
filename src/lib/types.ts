@@ -13,6 +13,23 @@ type TextFiber = {
     [property: string]: any;
   };
 };
+
+export type EffectHookType = {
+  tag: "effect";
+  effect?: () => () => any;
+  cancel?: () => any;
+  deps: any[];
+};
+export type actionType<T> = T | ((arg: T) => T);
+export type actionOrStateList<T> = actionType<T>[];
+export type StateHookType<T> = {
+  tag?: "state";
+  state: T;
+  queue: actionOrStateList<T>;
+};
+
+export type HookType = EffectHookType | StateHookType<any>;
+
 export type FunctionFiber = {
   type: Function;
   parent?: IFiberNodeType;
@@ -21,7 +38,7 @@ export type FunctionFiber = {
   sibling?: IFiberNodeType;
   effectTag?: "UPDATE" | "PLACEMENT" | "DELETION";
   alternate?: IFiberNodeType;
-  hooks?: any[];
+  hooks?: HookType[];
   props: {
     nodeValue?: Exclude<IChildType, IFiberNodeType>;
     children: IFiberNodeType[];

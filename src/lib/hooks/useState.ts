@@ -1,4 +1,9 @@
-import { FunctionFiber } from "../types";
+import {
+  actionOrStateList,
+  actionType,
+  FunctionFiber,
+  StateHookType,
+} from "../types";
 import {
   currentRoot,
   deletions,
@@ -8,16 +13,13 @@ import {
   WipRoot,
 } from "../workStore";
 
-type actionType<T> = T | ((arg: T) => T);
-type actionOrStateList<T> = actionType<T>[];
-type HookType<T> = { state: T; queue: actionOrStateList<T> };
-
 export function useState<T>(initial: T): [T, (arg: actionType<T>) => void] {
-  const oldHook: HookType<T> =
-    wipFiber.current!.alternate &&
+  const oldHook: StateHookType<T> = (wipFiber.current!.alternate &&
     (wipFiber.current!.alternate as FunctionFiber).hooks &&
-    (wipFiber.current!.alternate as FunctionFiber).hooks?.[hookIndex.current];
-  const hook: HookType<T> = {
+    (wipFiber.current!.alternate as FunctionFiber).hooks?.[
+      hookIndex.current
+    ]) as StateHookType<T>;
+  const hook: StateHookType<T> = {
     state: oldHook ? oldHook.state : initial,
     queue: [],
   };
@@ -30,7 +32,6 @@ export function useState<T>(initial: T): [T, (arg: actionType<T>) => void] {
       hook.state = action;
     }
   });
-  console.log(hook);
 
   const setState = (action: actionType<T>) => {
     hook.queue.push(action);
@@ -42,11 +43,9 @@ export function useState<T>(initial: T): [T, (arg: actionType<T>) => void] {
       type: currentRoot.current!.type,
     };
     nextUnitOfWork.current = WipRoot.current;
-    // console.log("nextUnitOfWork.current : ", nextUnitOfWork.current);
     deletions.current = [];
   };
   wipFiber.current!.hooks?.push(hook);
-  console.log(wipFiber.current);
   hookIndex.current++;
   return [hook.state, setState];
 }

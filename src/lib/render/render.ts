@@ -1,3 +1,4 @@
+import { updateDom } from "../commit/commitWork";
 import { FunctionFiber, IFiberNodeType } from "../types";
 import { currentRoot, deletions, nextUnitOfWork } from "../workStore";
 import { WipRoot } from "../workStore";
@@ -15,6 +16,7 @@ export const createDom = (fiber: Exclude<IFiberNodeType, FunctionFiber>) => {
       // fix me
       (dom as any)[name] = fiber.props[name];
     });
+  updateDom(dom, { children: [] }, fiber.props);
   return dom;
 };
 

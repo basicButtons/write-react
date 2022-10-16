@@ -6,7 +6,6 @@ import { nextUnitOfWork, WipRoot } from "../workStore";
 export function workLoop(deadline: any) {
   let shouldYield: boolean = false;
   while (nextUnitOfWork.current && !shouldYield) {
-    // console.log("nextUnitOfWork.current : ", nextUnitOfWork.current);
     nextUnitOfWork.current = performUnitOfWork(nextUnitOfWork.current);
     shouldYield = deadline.timeRemaining() < 1;
   }
