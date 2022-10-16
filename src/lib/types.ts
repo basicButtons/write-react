@@ -21,6 +21,7 @@ export type FunctionFiber = {
   sibling?: IFiberNodeType;
   effectTag?: "UPDATE" | "PLACEMENT" | "DELETION";
   alternate?: IFiberNodeType;
+  hooks?: any[];
   props: {
     nodeValue?: Exclude<IChildType, IFiberNodeType>;
     children: IFiberNodeType[];

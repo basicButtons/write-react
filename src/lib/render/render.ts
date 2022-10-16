@@ -1,9 +1,9 @@
-import { IFiberNodeType } from "../types";
+import { FunctionFiber, IFiberNodeType } from "../types";
 import { currentRoot, deletions, nextUnitOfWork } from "../workStore";
 import { WipRoot } from "../workStore";
 
 // 这个地方ts里面的dom类型还不是很清楚。
-export const createDom = (fiber: IFiberNodeType) => {
+export const createDom = (fiber: Exclude<IFiberNodeType, FunctionFiber>) => {
   const dom: Node =
     fiber.type === "TEXT_ELEMENT"
       ? document.createTextNode(fiber.props.nodeValue!.toString())

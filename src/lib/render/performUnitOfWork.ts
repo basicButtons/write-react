@@ -1,6 +1,7 @@
 import { reconcileChildren } from "./reconcileChildren";
 import { createDom } from "./render";
 import { FunctionFiber, IFiberNodeType } from "../types";
+import { hookIndex, wipFiber } from "../workStore";
 
 export function performUnitOfWork(
   fiber: IFiberNodeType
@@ -30,13 +31,15 @@ export function performUnitOfWork(
 
 function updateFunctionComponent(fiber: FunctionFiber) {
   // 对于 Function Component，在 render 的时候，会执行一次。
+  wipFiber.current = fiber;
+  hookIndex.current = 0;
   const children = [fiber.type(fiber.props)];
   reconcileChildren(fiber, children);
 }
 
 function updateHostComponent(fiber: IFiberNodeType) {
   if (!fiber.dom) {
-    fiber.dom = createDom(fiber);
+    fiber.dom = createDom(fiber as Exclude<IFiberNodeType, FunctionFiber>);
   }
   reconcileChildren(fiber, fiber.props.children);
 }

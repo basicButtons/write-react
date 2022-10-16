@@ -5,6 +5,7 @@ export function commitWork(fiber: IFiberNodeType | undefined) {
   if (!fiber) {
     return;
   }
+  // 在 commit work 阶段 由于function Component 的fiber没有node节点，所以说没有办法 在他对应的dom上进行操作，所以说需要向上回溯。
   let domParentFiber: IFiberNodeType = fiber.parent!;
   while (!domParentFiber.dom) {
     domParentFiber = domParentFiber.parent!;
