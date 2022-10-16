@@ -7,6 +7,6 @@ const element: IFiberNodeType = (
     <b>12312</b>
   </div>
 );
-console.log(element);
+
 const container = document.getElementById("root")!;
 render(element, container);

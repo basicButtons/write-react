@@ -9,7 +9,10 @@ export let WipRoot: { current: IFiberNodeType | undefined } = {
   current: undefined,
 };
 
-export let currentRoot : { current: IFiberNodeType | undefined } = {
-    current: undefined,
-  };
-  
+export let currentRoot: { current: IFiberNodeType | undefined } = {
+  current: undefined,
+};
+
+export let deletions: { current: IFiberNodeType[] } = {
+  current: [],
+};

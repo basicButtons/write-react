@@ -1,7 +1,8 @@
-import { commitRoot } from "./commit";
-import { performUnitOfWork } from "./performUnitOfWork";
-import { nextUnitOfWork, WipRoot } from "./workStore";
+import { commitRoot } from "../commit";
+import { performUnitOfWork } from "../render";
+import { nextUnitOfWork, WipRoot } from "../workStore";
 
+// workLoop 一直在循环。
 export function workLoop(deadline: any) {
   let shouldYield: boolean = false;
   while (nextUnitOfWork.current && !shouldYield) {

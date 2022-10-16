@@ -5,6 +5,7 @@ type TextFiber = {
   dom?: Node;
   child?: IFiberNodeType;
   sibling?: IFiberNodeType;
+  effectTag?: "UPDATE" | "PLACEMENT" | "DELETION";
   alternate?: IFiberNodeType;
   props: {
     nodeValue?: Exclude<IChildType, IFiberNodeType>;
@@ -19,6 +20,7 @@ export type NodeFiber = {
   child?: IFiberNodeType;
   sibling?: IFiberNodeType;
   alternate?: IFiberNodeType;
+  effectTag?: "UPDATE" | "PLACEMENT" | "DELETION";
   props: {
     [property: string]: any;
     children: IFiberNodeType[];

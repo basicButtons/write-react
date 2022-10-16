@@ -1,6 +1,6 @@
-import { IFiberNodeType } from "./types";
-import { currentRoot, nextUnitOfWork } from "./workStore";
-import { WipRoot } from "./workStore";
+import { IFiberNodeType } from "../types";
+import { currentRoot, deletions, nextUnitOfWork } from "../workStore";
+import { WipRoot } from "../workStore";
 
 // 这个地方ts里面的dom类型还不是很清楚。
 export const createDom = (fiber: IFiberNodeType) => {
@@ -29,5 +29,6 @@ export const render: any = (element: IFiberNodeType, container: Node) => {
       children: [element],
     },
   };
+  deletions.current = [];
   nextUnitOfWork.current = WipRoot.current;
 };

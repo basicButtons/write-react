@@ -3,8 +3,8 @@ import {
   IFiberNodeType,
   IChildType,
   createTextElementType,
-} from "./types";
-export * from "./types";
+} from "../types";
+export * from "../types";
 
 export const createTextElement: createTextElementType = (text) => {
   return {
